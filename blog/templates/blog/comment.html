@@ -1,0 +1,15 @@
+
+
+{% if now_commented %}
+    <div class="">
+        <p class=" alert alert-info">Your comment has been submitted and will publishwd after confirmation.</p>
+    </div>
+{% else %}
+<div class="">
+        <form method="post" >
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="submit"></p>
+        </form>
+    </div>
+{% endif %}

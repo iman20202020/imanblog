@@ -1,0 +1,48 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Log-in{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="row g-0 d-flex align-items-center">
+ <div class="col-lg-8">
+        <div class="card-body py-5 px-md-5">
+
+
+  <h1>Log-in</h1>
+  {% if form.errors %}
+    <p>
+      Your username and password didn't match.
+      Please try again.
+    </p>
+  {% else %}
+    <p>
+      Please, use the following form to log-in.
+      If you don't have an account <a href="{% url "account:register" %}">register here</a>.
+    </p>
+  {% endif %}
+  <div class="form-outline mb-4">
+    <form action="{% url 'account:login' %}" method="post" class="">
+      {{ form.as_p }}
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <p><input type="submit" class="btn btn-primary btn-block mb-4" value="Log-in"></p>
+
+
+             <div class="col">
+    <p>
+
+      <a href="{% url "account:password_reset" %}">
+        Forgotten your password?
+      </a>
+    </p>
+             </div>
+ </form>
+  </div>
+  </div>
+  </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}
