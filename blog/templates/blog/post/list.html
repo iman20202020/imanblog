@@ -4,57 +4,44 @@
 {% block content %}
 <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 <div class="container">
-      <div class="row">
-        <!-- Main content -->
+    <div class="row">
         <div class="col-lg-9 mb-3">
-          <div class="row text-left mb-5">
-            <div class="col-lg-6 mb-3 mb-sm-0">
-            </div>
-          </div>
-    {% for post in page_obj.object_list %}
-
-          <div class="card row-hover pos-relative py-3 px-3 mb-3 border-warning border-top-0 border-right-0 border-bottom-0 rounded-0">
-            <div class="row align-items-center">
-              <div class="col-md-8 mb-3 mb-sm-0">
-                <h5>
-                 <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                </h5>
-                  <p class="text-sm "><span class="op-6">{{ post.body|truncatewords:10 }}</span></p>
-                  <p class="text-sm text-secondary"><span class="op-6">Posted{{ post.publish }} by {{ post.author }}</span></p>
-                <div class="text-sm op-5">
-                {% for tag in post.tags.all %}
-                        <a href="{% url "blog:post_list_by_tag" tag.slug %}">{{ tag.name }}</a>{% if not forloop.last %} , {% endif %}
-                {% endfor %}
+         <div class="col-lg-3 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
+               <div class="sticky-inner text-center">
+                    <a class="btn btn-lg btn-block btn-success rounded-0 py-4 mb-3 bg-op-6 roboto-bold" href="{% url 'blog:post_create' %}">Make your post</a>
                 </div>
-              </div>
-              <div class="col-md-4 op-7">
-                <div class="row text-center op-7">
-            {% with total_likes=post.users_like.count %}
-                  <div class="col px-1"> <i class="ion-connection-bars icon-1x"></i> <span class="d-block text-sm">{{ total_likes }} vote{{ total_likes|pluralize }}</span> </div>
-            {% endwith %}
-            {% with total_comments=post.comments.count %}
-                  <div class="col px-1"> <i class="ion-ios-chatboxes-outline icon-1x"></i> <span class="d-block text-sm">{{ total_comments }}</span> </div>
-            {% endwith %}
-                  <div class="col px-1"> <i class="ion-ios-eye-outline icon-1x"></i> <span class="d-block text-sm">{% get_hit_count for post %} Views</span> </div>
+
+        {% for post in page_obj.object_list %}
+
+            <div class="card row-hover pos-relative py-3 px-3 mb-3 border-warning border-top-0 border-right-0 border-bottom-0 rounded-0">
+                <div class="row align-items-center">
+                    <div class="col-md-8 mb-3 mb-sm-0">
+                        <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                        <p class="text-sm "><span class="op-6">{{ post.body|truncatewords:10 }}</span></p>
+                        <p class="text-sm text-secondary"><span class="op-6">Posted{{ post.publish }} by {{ post.author }}</span></p>
+                        <div class="text-sm op-5">
+                        {% for tag in post.tags.all %}
+                            <a href="{% url "blog:post_list_by_tag" tag.slug %}">{{ tag.name }}</a>{% if not forloop.last %} , {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-4 op-7">
+                        <div class="row text-center op-7">
+                        {% with total_likes=post.users_like.count %}
+                            <div class="col px-1"> <i class="ion-heart icon-1x"></i> <span class="d-block text-sm">{{ total_likes }} Like{{ total_likes|pluralize }}</span> </div>
+                        {% endwith %}
+                        {% with total_comments=post.comments.count %}
+                            <div class="col px-1"> <i class="ion-ios-chatboxes-outline icon-1x"></i> <span class="d-block text-sm">{{ total_comments }}</span> </div>
+                        {% endwith %}
+                            <div class="col px-1"> <i class="ion-ios-eye-outline icon-1x"></i> <span class="d-block text-sm">{% get_hit_count for post %} Views</span> </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
+            {% endfor %}
 
-        {% endfor %}
-          <!-- /End of post 1 -->
-          <!-- End of post 2 -->
-
-        <!-- Sidebar content -->
-        <div class="col-lg-3 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
-          <div style="visibility: hidden; display: none; width: 285px; height: 801px; margin: 0px; float: none; position: static; inset: 85px auto auto;"></div><div data-settings="{&quot;parent&quot;:&quot;#content&quot;,&quot;mind&quot;:&quot;#header&quot;,&quot;top&quot;:10,&quot;breakpoint&quot;:992}" data-toggle="sticky" class="sticky" style="top: 85px;"><div class="sticky-inner">
-            <a class="btn btn-lg btn-block btn-success rounded-0 py-4 mb-3 bg-op-6 roboto-bold" href="{% url 'blog:post_create' %}">Make your post</a>
-
-            </div>
-          </div></div>
         </div>
-      </div>
     </div>
 </div>
-
-  {% endblock %}
+</div>
+{% endblock %}

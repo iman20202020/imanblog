@@ -14,9 +14,12 @@ urlpatterns = [
     # create a new post
     path('create/', views.post_create, name='post_create'),
     path('comment/<int:post_id>/<int:comment_id>/', views.comment_comment, name='comment_comment'),
+    path('comment/<int:post_id>/', views.post_comment, name='post_comment'),
     path('search/', views.post_search, name='post_search'),
     path('like/', views.post_like, name='post_like'),
 
 
 
 ]
+
+

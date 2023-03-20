@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -27,7 +29,7 @@ def post_list(request, tag_slug=None):
     except PageNotAnInteger:
         page_obj = paginator.page(1)
     except EmptyPage:
-            return HttpResponse('')
+        return HttpResponse('')
     return render(request, 'blog/post/list.html', {'tag': tag, 'page_obj': page_obj})
 
 
@@ -37,6 +39,16 @@ class PostDetailView(HitCountDetailView):
     context_object_name = 'post'
     slug_field = 'slug'
     count_hit = True
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        post_tags = self.object.tags.all()
+        similar_posts = self.model.published.filter(tags__in=post_tags).exclude(id=self.object.id)
+        data['similar_posts'] = similar_posts
+        data['tags'] = post_tags
+        data['comments'] = self.object.comments.filter(active=True)
+
+        return data
 
 
 @login_required
@@ -63,15 +75,12 @@ def post_search(request):
     query = None
     results = []
     if 'query' in request.GET:
-        form = SearchForm(request.GET)
-        if form.is_valid():
-            query = form.cleaned_data['query']
-            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
-            search_query = SearchQuery(query)
-            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)
-                                              ).filter(rank__gte=0.3).order_by('-rank')
-
-    return render(request, 'blog/search.html', {'form': form, 'query': query, 'results': results})
+        query = request.GET.get('query')
+        search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+        search_query = SearchQuery(query)
+        results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)
+                                          ).filter(rank__gte=0.3).order_by('-rank')
+    return render(request, 'blog/base.html', {'form': form, 'query': query, 'results': results})
 
 
 @require_POST
@@ -87,6 +96,24 @@ def post_like(request):
             post.users_like.remove(request.user)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'})
+
+
+@login_required
+def post_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    now_commented = False
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            now_commented = True
+    else:
+        comment_form = CommentForm()
+
+    return render(request, 'blog/base.html', {'comment_form': comment_form, 'now_commented': now_commented, 'post': post,})
 
 
 @login_required
@@ -106,9 +133,4 @@ def comment_comment(request, post_id, comment_id):
     else:
         comment_form = CommentForm()
 
-    return render(request, 'blog/comment.html', {'comment_form': comment_form, 'now_commented': now_commented})
-
-
-
-
-
+    return render(request, 'blog/base.html', {'comment_form': comment_form, 'now_commented': now_commented, 'post': post,})

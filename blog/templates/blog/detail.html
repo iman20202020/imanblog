@@ -6,6 +6,9 @@
       <div class="row text-center mb-5">
 <h1>{{ post.title }}</h1>
           <p>views: {% get_hit_count for post %}</p>
+          <p>tags:
+              {% for tag in tags %}
+                  {{ tag.name }}{% if not forloop.last  %}, {% endif %}{% endfor %}</p>
 {% with total_likes=post.users_like.count users_like=post.users_like.all %}
 
 <div class="info">
@@ -30,10 +33,9 @@
 Published {{ post.publish }} by {{ post.author }}
 </p>
 {{ post.body|linebreaks }}
-
-
 {% if post.image %}<img  src="{{ post.image.url }}">{% endif %}
       </div>
+   <a  href="{% url 'blog:post_comment' post.id  %}" class="button" >Add your comment</a>
  </div>
 
 <div class="bg-white mb-3">
@@ -44,11 +46,8 @@ Published {{ post.publish }} by {{ post.author }}
               <hr class="m-0">
  {% for similar_post in similar_posts %}
               <div class="pos-relative px-3 py-3">
-                <h6 class="text-primary text-sm">
-
-
- <a href="{{ similar_post.get_absolute_url }}" >{{ similar_post.title }}</a>
-
+                <h6 class=" text-sm">
+ <a href="{{ similar_post.get_absolute_url }}" >{{ similar_post.title }}</a>:<span class="small text text-secondary"> {{ similar_post.body|truncatewords:5 }}</span>
                 </h6>
               </div>
 
@@ -56,11 +55,6 @@ Published {{ post.publish }} by {{ post.author }}
  There are no similar posts yet.
  {% endfor %}
       </div>
-<hr>
-
-
-
-<div class=" row">
 {% if not now_commented and comment_form %}
     <h4>Add your comment:</h4>
     <form method="post" action="">
@@ -72,16 +66,17 @@ Published {{ post.publish }} by {{ post.author }}
 
     <p class="info">{{ comment.body|linebreaks }}</p>
 {% endif %}
-</div><br>
 
 <hr>
-    {% with post.comments.all.count as total_comments %}
+    <div >
+
+    {% with comments.count as total_comments %}
 <h2>Comments:
  {{ total_comments }} comment{{ total_comments|pluralize }}
  </h2>
  {% endwith %}
-    <hr>
-{% for comment in post.comments.all %}
+
+{% for comment in comments.all %}
     {% if not comment.comment_comments.all  %}
         <div class="">
         <p>{{ comment.name }}:</p>
@@ -97,13 +92,14 @@ Published {{ post.publish }} by {{ post.author }}
             {% endif %}
         </div>
         <a  href="{% url 'blog:comment_comment' post.id comment.id %}" class="button" >Add your comment</a>
-        <hr style="color: #cccccc; ">
+
     {% endif %}
 
 
 {% endfor %}
-
+    </div>
 {% endblock %}
+
  {% block domready %}
 
  const url = '{% url "blog:post_like" %}';

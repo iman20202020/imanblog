@@ -1,12 +1,14 @@
 
 
 {% if now_commented %}
-    <div class="">
-        <p class=" alert alert-info">Your comment has been submitted and will publishwd after confirmation.</p>
+    <div class=" alert alert-info">
+        <p >Your comment has been submitted and will publishwd after confirmation.</p>
+
+        <p><a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-success">Back to post</a></p>
     </div>
 {% else %}
 <div class="">
-        <form method="post" >
+        <form method="post" class="form-control" >
             {{ comment_form.as_p }}
             {% csrf_token %}
             <p><input type="submit" value="submit"></p>
