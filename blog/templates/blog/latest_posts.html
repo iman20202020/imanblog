@@ -1,7 +1,11 @@
 <ul>
  {% for post in latest_posts %}
  <li>
- <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+ <a href="{{ post.get_absolute_url }}">{{ post.title }}: </a>
+     <p class="small">{{ post.body|truncatewords:15 }}</p>
+     <p class="small">published at: {{ post.publish }}</p>
+     <p class="small"> by {{ post.author_name }}</p>
  </li>
+     <hr class="mb-0">
  {% endfor %}
 </ul>

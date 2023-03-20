@@ -4,7 +4,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 from django_unique_slugify import unique_slugify
 from hitcount.models import HitCount
 from hitcount.settings import MODEL_HITCOUNT
@@ -44,28 +43,18 @@ class Post(models.Model, HitCountMixin):
     users_like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='posts_liked', blank=True)
 
     class Meta:
-        ordering = ['-publish']
+        ordering = ['-publish', 'hit_count_generic__hits']
         indexes = [models.Index(fields=['-publish']), ]
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+        return reverse('blog:post_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
-        # if not self.slug:
-
         unique_slugify(self, self.title)
-            # slug += f'-{slugify(self.author_name)}'
-            # self.slug = slug
-        # image_name = f'{self.slug}.JPEG'
-
-
         super().save(*args, **kwargs)
-
-
-
 
 
 class Comment(models.Model):
@@ -77,7 +66,6 @@ class Comment(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     contact = models.ManyToManyField('self', through='CommentContact', related_name='comment_comments', symmetrical=False)
-
 
     class Meta:
         ordering = ['created']
@@ -99,7 +87,6 @@ class CommentContact(models.Model):
         indexes = [
             models.Index(fields=['-created']),
         ]
-
     ordering = ['-created']
 
 

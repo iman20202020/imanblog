@@ -2,9 +2,10 @@
 {% load hitcount_tags %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-
+ <div class="container">
+      <div class="row text-center mb-5">
 <h1>{{ post.title }}</h1>
-{% get_hit_count for post %}
+          <p>views: {% get_hit_count for post %}</p>
 {% with total_likes=post.users_like.count users_like=post.users_like.all %}
 
 <div class="info">
@@ -24,7 +25,7 @@
 
 
 {% endwith %}
-<p>views: {{ total_views }}</p>
+
 <p class="date">
 Published {{ post.publish }} by {{ post.author }}
 </p>
@@ -32,21 +33,8 @@ Published {{ post.publish }} by {{ post.author }}
 
 
 {% if post.image %}<img  src="{{ post.image.url }}">{% endif %}
-
-
-{##}
-{#                  <a href="#" class="text-primary">Why Bootstrap 4 is so awesome? </a>#}
-{#                </h6>#}
-{#                <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">39 minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="#">AppStrapMaster</a></p>#}
-{#              </div>#}
-{##}
-{#              <div class="row d-flex flex-row op-7">#}
-{#                <div class="col-sm-6 flex-ew text-center py-3 border-right mx-0"> <a class="d-block lead font-weight-bold" href="#">300</a> Members </div>#}
-{#                <div class="col-sm-6 flex-ew text-center py-3 mx-0"> <a class="d-block lead font-weight-bold" href="#">DanielD</a> Newest Member </div>#}
-{#              </div>#}
-
-
-
+      </div>
+ </div>
 
 <div class="bg-white mb-3">
               <h4 class="px-3 py-4 op-5 m-0">
